@@ -52,6 +52,12 @@ services:
     restart: unless-stopped
     networks:
       - appwrite-lite
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.appwriteio.rule=Host(`appwrite.sebrichs.xyz`)"
+      - "traefik.http.routers.appwriteio.entrypoints=websecure"
+      - "traefik.http.routers.appwriteio.tls.certResolver=letsencrypt"
+      - "traefik.http.services.appwriteio.loadbalancer.server.port=3000"
     volumes:
       - appwrite-lite-mariadb:/var/lib/mysql:rw
     ports:
@@ -66,6 +72,7 @@ services:
 
 networks:
   appwrite-lite:
+    external: true
 
 volumes:
   appwrite-lite-mariadb:
