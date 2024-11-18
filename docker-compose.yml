@@ -45,7 +45,13 @@ services:
       - _APP_FUNCTIONS_CPUS
       - _APP_FUNCTIONS_MEMORY
       - _APP_FUNCTIONS_MEMORY_SWAP
-
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.appwrite-lite.rule=Host(`lite.sebrichs.xyz`)"
+      - "traefik.http.routers.appwrite-lite.entrypoints=websecure"
+      - "traefik.http.routers.appwrite-lite.tls.certResolver=letsencrypt"
+      - "traefik.http.services.appwrite-lite.loadbalancer.server.port=80"
+  
   mariadb:
     image: appwrite/mariadb:1.2.0 # fix issues when upgrading using: mysql_upgrade -u root -p
     container_name: appwrite-lite-mariadb
@@ -62,10 +68,10 @@ services:
       - MYSQL_USER=${_APP_DB_USER}
       - MYSQL_PASSWORD=${_APP_DB_PASS}
     command: 'mysqld --innodb-flush-method=fsync'
-  
 
 networks:
   appwrite-lite:
+    external: true
 
 volumes:
   appwrite-lite-mariadb:
